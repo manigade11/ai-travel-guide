@@ -1,3 +1,5 @@
+const GENERATE_AUDIO_GUIDE_API_URL = "/generate-audio-guide";
+
 // --- Constants ---
 const VOICES = {
   English: { Male: "Matthew", Female: "Alicia" },
@@ -125,7 +127,7 @@ voiceButtons.forEach(btn => {
 
 // Generate Audio guide button Logic
 
-const API_URL = "/generate-audio-guide";
+//const API_URL = "/generate-audio-guide";
 
 generateButton.addEventListener('click', async () => {
   generateButton.disabled = true;
