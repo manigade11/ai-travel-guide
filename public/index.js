@@ -138,41 +138,42 @@ generateButton.addEventListener('click', async () => {
     const selectedVoice = state.voice;
 
     const response = await fetch(GENERATE_AUDIO_GUIDE_API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        place: state.place,
-        answerType: state.length,
-        language: selectedLanguage,
-        voiceId: VOICES[selectedLanguage][selectedVoice],
-        locale: LOCALES[selectedLanguage]
-      })
-    });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    place: state.place,
+    answerType: state.length,
+    language: languageSelect.value,
+    voice: state.voice
+  })
+});
 
-    if (!response.ok) throw new Error('Generation failed');
+const data = await response.json();
 
-    const data = await response.json();
+if (!response.ok) {
+  throw new Error(data.error || data.message || `HTTP ${response.status}`);
+}
 
-    // Update UI with Result
-    transcriptText.textContent = data.description;
-    audioSection.classList.remove('hidden');
+transcriptText.textContent = data.description || "";
 
-    if (data.audioBase64) {
-      audioPlayer.src = `data:audio/mp3;base64,${data.audioBase64}`;
-      audioPlayer.load();
-      audioPlayer.classList.remove('hidden');
-      generateButton.textContent = 'Listen to Audio';
-    } else {
-      audioPlayer.classList.add('hidden');
-      generateButton.textContent = 'Audio Not Available';
-    }
+audioSection.classList.remove("hidden");
 
+if (data.audioBase64) {
+  audioPlayer.src = `data:audio/mpeg;base64,${data.audioBase64}`;
+  audioPlayer.load();
+  audioPlayer.classList.remove("hidden");
+  generateButton.textContent = "Listen to Audio";
+} else {
+  throw new Error("The server did not return audio.");
+}
   } catch (err) {
-    console.error(err);
-    alert('Generation failed. Please check your connection.');
-    generateButton.textContent = 'Generate Audio Guide';
-    generateButton.disabled = false;
-  }
+  console.error("Audio generation error:", err);
+  alert(`Generation failed: ${err.message}`);
+  generateButton.textContent = "Generate Audio Guide";
+  generateButton.disabled = false;
+}
 });
 
 // Transcript Toggle
